@@ -1,0 +1,105 @@
+{
+	"info": {
+		"_postman_id": "89479bb4-4a72-4163-9af8-4a03419cf626",
+		"name": "WorkOrderAPI",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "/workorder/addOrder",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"requesterId\" : 20,\n\t\"timeOfRequest\" : 5000000000\n}"
+				},
+				"url": "http://localhost:8080/workorder/addOrder",
+				"description": "An endpoint for adding a ID to queue (enqueue). This endpoint should accept two parameters, the ID to enqueue and the time at which the ID was added to the queue."
+			},
+			"response": []
+		},
+		{
+			"name": "/workorder/getOrderList",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": "http://localhost:8080/workorder/getOrderList",
+				"description": "An endpoint for getting the list of IDs in the queue. This endpoint should return a list of IDs sorted from highest ranked to lowest."
+			},
+			"response": []
+		},
+		{
+			"name": "/workorder/getPosition/{requesterId}",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": "http://localhost:8080/workorder/getPosition/20",
+				"description": "An endpoint to get the position of a speciﬁc ID in the queue. This endpoint should accept one parameter, the ID to get the position of. It should return the position of the ID in the queue indexed from 0."
+			},
+			"response": []
+		},
+		{
+			"name": "/workorder/avgWaitTime/{timeOfReference}",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": "http://localhost:8080/workorder/avgWaitTime/9000000000",
+				"description": "An endpoint to get the average wait time. This endpoint should accept a single parameter, the current time, and should return the average (mean) number of seconds that each ID has been waiting in the queue."
+			},
+			"response": []
+		},
+		{
+			"name": "/workorder/remove/{requesterId}",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {},
+				"url": "http://localhost:8080/workorder/remove/20",
+				"description": "An endpoint for removing a speciﬁc ID from the queue. This endpoint should accept a single parameter, the ID to remove."
+			},
+			"response": []
+		},
+		{
+			"name": "/workorder/removeNextOrder",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": "http://localhost:8080/workorder/removeNextOrder",
+				"description": "An endpoint for getting the top ID from the queue and removing it (dequeue). This endpoint should return the highest ranked ID and the time it was entered into the queue."
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "f2b10a4d-2d7d-4115-aefd-70861e43b528",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "441fc79c-df14-48e3-aab5-aa9f437870c7",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
