@@ -2,14 +2,22 @@
 - - - - - - - -
 ![picture alt](https://ci.spring.io/api/v1/teams/spring-boot/pipelines/spring-boot-2.0.x/jobs/build/badge) ![picture alt](https://img.shields.io/badge/Coverage-96.7%25-brightgreen.svg) ![picture alt](https://img.shields.io/hackage-deps/v/lens.svg) ![picture alt](https://img.shields.io/badge/Spring%20Boot-2.0.4.RELEASE-Blue.svg)
 ## Problem Statement ##
+&nbsp;
 _Create a web service that accepts work orders and provides a prioritized list to work._
-
-
+&nbsp;
 ![picture alt](https://thumbs.dreamstime.com/x/asian-business-people-group-sitting-line-queue-door-asia-businesspeople-banner-flat-vector-illustration-70825754.jpg, "Job Scheduler uses priority queue.")
 
-Develop a Restful API for creating work order queue for Service Desk employee. The work order can be of four types  `normal, priority, VIP, and management override`. Each type of request has it's own implementation for calculating rank. Different types of requests uses different formula to calculate the rank. The priority queue is sorted from highest ranked to lowest ranked ID.
+<!-- TOC depthFrom:1 depthTo:2 withLinks:1 updateOnSave:1 orderedList:0 -->
 
-At the core the app uses a priority queue interface for creating work order queue. The priority queue is used to solve [many useful problems](https://en.wikipedia.org/wiki/Priority_queue#Applications).
+- [WorkOrder REST API](#work-order-priority-queue-web-services)
+	- [Getting Started](#getting-started)
+	- [Pre Dev Analysis](#pre-dev-analysis)
+	- [API Contract](#api-contract)
+	- [License](#license)
+<!-- /TOC -->
+
+
+This project is a Restful API for creating work order queue for Service Desk employee. The work order can be of four types  `normal, priority, VIP, and management override`. Different request types have their own implementation for calculating the rank. The priority queue is sorted from highest ranked to lowest ranked requester ID.
 
 ## GETTING STARTED ##
 This application is a written in java using [Spring Boot][1] and built using Maven. 
@@ -20,7 +28,7 @@ This application is a written in java using [Spring Boot][1] and built using Mav
 * Maven 3.0 or later
 
 ### Quick Start ###
-This would be really quick. To test the application, you just need to do these two things: 
+To test the application, just follow the two simple steps mentioned below: 
 
 1. Download the fat jar of this application from [bin](https://github.com/Govind-jha/springboot-work-order-priority-queue/tree/master/bin, "click here.") folder. Now to start the application server, open command prompt and run the downloaded `jar` file,
 ```
@@ -50,7 +58,7 @@ Then you can run the JAR file with
 ```
 ### Test ###
 
->> Download the postman collection form [postman](https://github.com/Govind-jha/springboot-work-order-priority-queue/tree/master/postman, "click here.") folder. Import the collection in [Postman client](https://github.com/postmanlabs) for smoke testing.
+> Download the postman collection form [postman](https://github.com/Govind-jha/springboot-work-order-priority-queue/tree/master/postman, "click here.") folder. Import the collection in [Postman client](https://github.com/postmanlabs) for smoke testing.
 
 You can test these Micro Services using any tool or language that allows you to make a HTTP request. For example, removing an order using [CURL](https://curl.haxx.se/):
 ```sh
@@ -108,7 +116,7 @@ There are 4 classes of IDs, normal, priority, VIP, and management override. You 
 | `MANAGEMENT_OVERRIDE`      | (requestorID % 3 == 0 && requestorID % 5 == 0) |
 
 ### Rank Calculation Formula ###
-IDs must be sorted in the queue according to a formula that varies based on their class. The table below lists the formula to calculate the rank for different request types.
+The table below lists the formulas for calculating the rank of different request types,
 &nbsp;
 
 | Request Type      | Ranking Function            |
@@ -122,7 +130,7 @@ IDs must be sorted in the queue according to a formula that varies based on thei
 
 ## API Contract ##
 
-The WorkOrder Api implements the requirement/rules described in the previous section. It is used to create a work order queue for service request desk employee.
+The WorkOrder Api implements the requirement/rules described in the previous section. It is used to create a work order queue (a #### Priority Queue #### based interface) for service request desk employee.
 
 ### Response Code And Headers ###
 If response status code is `204 NO CONTENT` or `205 RESET CONTENT`, the response will contain header `x-app-diagnostic`. HTTP status `205 RESET CONTENT` means server successfully processed the request, but is not returning any content. Unlike a `204 NO CONTENT` response, this response requires that the requester reset the document view (as the content might have changed).
@@ -145,13 +153,13 @@ _Response header `x-app-diagnostic` will contain the cause of no content in the 
 - Check the requests Method(GET, POST, DELETE) if you get HTTP Status `405`. 
 
 ### API Operation ###
-Resource components can be used in conjunction with identifiers to retrieve the metadata for that identifier.
+The Application will start on port `8080`, you can change this port configuration in application.properties file of the project. 
 
 | Base Resource                    | Description                       |
 |:----------------------------|:----------------------------------|
 |`/workorder`                   | provides endpoints for performing `create`, `read` and `delete` operations on work order queue.                      |
 
-| Operations                    | Description                       |Method|
+|API Operation                    | Description                       |Allowed Methods|
 |:----------------------------|:----------------------------------|-------|
 | `/addOrder`              | An endpoint for adding a ID to queue (enqueue). This endpoint should accept two parameters, the ID to enqueue(`requesterId`) and the time at which the ID was added to the queue(`timeOfRequest`). | `POST` |
 | `/getPosition/{requesterId}` | An endpoint to get the position of a speciﬁc ID in the queue. This endpoint should accept one parameter, the ID to get the position of. It should return the position of the ID in the queue indexed from 0.  | `GET` |
@@ -163,6 +171,7 @@ Resource components can be used in conjunction with identifiers to retrieve the 
 
 &nbsp;
 
-----------------------------
+## License ##
+The package is Open Source Software released under the [License](https://github.com/Govind-jha/springboot-work-order-priority-queue/blob/master/LICENSE). It's developed by [Govind Jha]("https://github.com/Govind-jha/").
 
 [1]: https://github.com/spring-projects/spring-boot
