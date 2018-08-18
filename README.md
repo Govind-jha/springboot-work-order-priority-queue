@@ -1,2 +1,168 @@
-# springboot--work-order-priority-queue
-A web service that accepts work orders and provides a prioritized list to work.
+# WORK ORDER PRIORITY QUEUE WEB SERVICES # 
+- - - - - - - -
+![picture alt](https://ci.spring.io/api/v1/teams/spring-boot/pipelines/spring-boot-2.0.x/jobs/build/badge) ![picture alt](https://img.shields.io/badge/Coverage-96.7%25-brightgreen.svg) ![picture alt](https://img.shields.io/hackage-deps/v/lens.svg) ![picture alt](https://img.shields.io/badge/Spring%20Boot-2.0.4.RELEASE-Blue.svg)
+## Problem Statement ##
+_Create a web service that accepts work orders and provides a prioritized list to work._
+
+
+![picture alt](https://thumbs.dreamstime.com/x/asian-business-people-group-sitting-line-queue-door-asia-businesspeople-banner-flat-vector-illustration-70825754.jpg, "Job Scheduler uses priority queue.")
+
+Develop a Restful API for creating work order queue for Service Desk employee. The work order can be of four types  `normal, priority, VIP, and management override`. Each type of request has it's own implementation for calculating rank. Different types of requests uses different formula to calculate the rank. The priority queue is sorted from highest ranked to lowest ranked ID.
+
+At the core the app uses a priority queue interface for creating work order queue. The priority queue is used to solve [many useful problems](https://en.wikipedia.org/wiki/Priority_queue#Applications).
+
+## GETTING STARTED ##
+This application is a written in java using [Spring Boot][1] and built using Maven. 
+
+### Prerequisites ###
+* Git
+* JDK 8 or later
+* Maven 3.0 or later
+
+### Quick Start ###
+This would be really quick. To test the application, you just need to do these two things: 
+
+1. Download the fat jar of this application from [bin](https://github.com/Govind-jha/springboot-work-order-priority-queue/tree/master/bin, "click here.") folder. Now to start the application server, open command prompt and run the downloaded `jar` file,
+```
+        java -jar workorder-1.0.0.one-jar
+```
+2. Once the server gets started, download the postman collection form [postman](https://github.com/Govind-jha/springboot-work-order-priority-queue/tree/master/postman, "click here.") folder of the project. Import the collection in [Postman client](https://github.com/postmanlabs) and you will be all set to play around with the API.
+
+### Clone ###
+To get started you can simply clone this repository using git:
+```
+git clone https://github.com/Govind-jha/springboot-work-order-priority-queue.git
+cd springboot-work-order-priority-queue
+```
+
+### Build an executable JAR ###
+You can run the application from the command line using
+```
+        mvn spring-boot:run
+```
+Or you can build a single executable JAR file that contains all the necessary dependencies, classes, and resources with
+```
+        mvn clean package
+```
+Then you can run the JAR file with
+```
+        java -jar target/*.jar
+```
+### Test ###
+
+>> Download the postman collection form [postman](https://github.com/Govind-jha/springboot-work-order-priority-queue/tree/master/postman, "click here.") folder. Import the collection in [Postman client](https://github.com/postmanlabs) for smoke testing.
+
+You can test these Micro Services using any tool or language that allows you to make a HTTP request. For example, removing an order using [CURL](https://curl.haxx.se/):
+```sh
+curl -X DELETE \
+  http://localhost:8080/workorder/remove/20 \
+  -H 'Cache-Control: no-cache' 
+```
+
+Creating a work order in the queue using `require` module in [Node.js](https://github.com/nodejs),
+
+```js
+var request = require("request");
+
+var options = { 
+    method: 'POST',
+      url: 'http://localhost:8080/workorder/addOrder',
+      headers: 
+       { 
+            'Cache-Control': 'no-cache',
+            'Content-Type': 'application/json' 
+        },
+      body: { requesterId: 20, timeOfRequest: 5000000000 },
+      json: true 
+};
+
+request(options, function (error, response, body) {
+  if (error) throw new Error(error);
+
+  console.log(body);
+});
+```
+
+## PRE DEV ANALYSIS ##
+
+### Object Model ###
+```
+PriorityQueue<WorkOrder>[ 
+    WorkOrder{
+        requestorID, 
+        requestType,
+        requestTimestamp,
+        requestDate
+    }, ...   
+]
+```
+### Request Type Calculation ###
+There are 4 classes of IDs, normal, priority, VIP, and management override. You can determine the class of the ID using the following method,
+&nbsp;
+
+| Request Type      | Condition                       |
+|-----------------|----------------------------------|
+| `NORMAL`      | (requestorID % 3 != 0 && requestorID % 5 != 0) |
+| `PRIORITY`    | requestorID % 3 == 0 |
+| `VIP` | requestorID % 5 == 0 |
+| `MANAGEMENT_OVERRIDE`      | (requestorID % 3 == 0 && requestorID % 5 == 0) |
+
+### Rank Calculation Formula ###
+IDs must be sorted in the queue according to a formula that varies based on their class. The table below lists the formula to calculate the rank for different request types.
+&nbsp;
+
+| Request Type      | Ranking Function            |
+|--------------|----------------------------------|
+| `NORMAL`      | secondsSpentInQueue |
+| `PRIORITY`    | max( 3 , secondsSpentInQueue * log(secondsSpentInQueue) ) |
+| `VIP` | max( 4 , 2 * secondsSpentInQueue * log(secondsSpentInQueue) ) |
+| `MANAGEMENT_OVERRIDE`      | max(NORMAL.maxPriority(), PRIORITY.maxPriority(), VIP.maxPriority()) + secondsSpentInQueue |
+
+![picture alt](https://cms-assets.tutsplus.com/uploads/users/34/posts/26706/preview_image/rest.jpg)
+
+## API Contract ##
+
+The WorkOrder Api implements the requirement/rules described in the previous section. It is used to create a work order queue for service request desk employee.
+
+### Response Code And Headers ###
+If response status code is `204 NO CONTENT` or `205 RESET CONTENT`, the response will contain header `x-app-diagnostic`. HTTP status `205 RESET CONTENT` means server successfully processed the request, but is not returning any content. Unlike a `204 NO CONTENT` response, this response requires that the requester reset the document view (as the content might have changed).
+
+_Response header `x-app-diagnostic` will contain the cause of no content in the response body._
+
+#### Response Codes
+
+|Status Code|Message|
+|-----------|-------|
+|`200`    |   Success |
+|`201`    |   Content Created|
+|`204`  | No Content |
+|`205`| Reset Content|
+|`404`|Not Found|
+|`405`| Method Not Allowed|
+|`415`| Usupported Media Type|
+
+- Check the requests content type if you get HTTP Status `415`. 
+- Check the requests Method(GET, POST, DELETE) if you get HTTP Status `405`. 
+
+### API Operation ###
+Resource components can be used in conjunction with identifiers to retrieve the metadata for that identifier.
+
+| Base Resource                    | Description                       |
+|:----------------------------|:----------------------------------|
+|`/workorder`                   | provides endpoints for performing `create`, `read` and `delete` operations on work order queue.                      |
+
+| Operations                    | Description                       |Method|
+|:----------------------------|:----------------------------------|-------|
+| `/addOrder`              | An endpoint for adding a ID to queue (enqueue). This endpoint should accept two parameters, the ID to enqueue(`requesterId`) and the time at which the ID was added to the queue(`timeOfRequest`). | `POST` |
+| `/getPosition/{requesterId}` | An endpoint to get the position of a speciﬁc ID in the queue. This endpoint should accept one parameter, the ID to get the position of. It should return the position of the ID in the queue indexed from 0.  | `GET` |
+| `/getOrderList` | An endpoint for getting the list of IDs in the queue. This endpoint should return a list of IDs sorted from highest ranked to lowest.  |`GET` |
+| `/remove/{requesterId}`      | An endpoint for removing a speciﬁc ID from the queue. This endpoint should accept a single parameter, the ID to remove.  |`DELETE` |
+|`/removeNextOrder` | An endpoint for getting the top ID from the queue and removing it (dequeue). This endpoint should return the highest ranked ID and the time it was entered into the queue.  |`GET` |
+| `/avgWaitTime/{currentTimeInMillis}` | An endpoint to get the average wait time. This endpoint should accept a single parameter, the current time, and should return the average (mean) number of seconds that each ID has been waiting in the queue.  |`GET` |
+
+
+&nbsp;
+
+----------------------------
+
+[1]: https://github.com/spring-projects/spring-boot
