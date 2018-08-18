@@ -130,7 +130,7 @@ The table below lists the formulas for calculating the rank of different request
 
 ## API Contract ##
 
-The WorkOrder Api implements the requirement/rules described in the previous section. It is used to create a work order queue (a #### Priority Queue #### based interface) for service request desk employee.
+The WorkOrder Api implements the requirement/rules described in the previous section. It is used to create a prioritized work order queue (a `Priority Queue`) for service request desk employee. It provides fetures like adding or removing an order from the queue based on priority, getting a sorted list of order etc.  
 
 ### Response Code And Headers ###
 If response status code is `204 NO CONTENT` or `205 RESET CONTENT`, the response will contain header `x-app-diagnostic`. HTTP status `205 RESET CONTENT` means server successfully processed the request, but is not returning any content. Unlike a `204 NO CONTENT` response, this response requires that the requester reset the document view (as the content might have changed).
