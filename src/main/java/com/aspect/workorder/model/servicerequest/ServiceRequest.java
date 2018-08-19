@@ -1,7 +1,11 @@
 package com.aspect.workorder.model.servicerequest;
 
 import java.util.Date;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
+import com.aspect.workorder.config.AppConstant;
 import com.aspect.workorder.utility.RequestType;
 
 /**
@@ -11,29 +15,27 @@ import com.aspect.workorder.utility.RequestType;
  * @author kumjha
  *
  */
-abstract public class ServiceRequest implements Comparable<ServiceRequest> {
+public abstract class ServiceRequest implements RankedServiceRequest, Comparable<ServiceRequest> {
 
 	private final Long requestorId;
-	private final Date date;
-
-	private final RequestType requestType;
 	private final Long timeOfRequest;
+
+	private final Date date;
+	private Long secondsElapsed;
+	private final RequestType requestType;
+
+	// Ticker : runs a function after specified interval.
+	private final ScheduledExecutorService ticker = Executors.newScheduledThreadPool(1);
 
 	public ServiceRequest(Long id, Long timeOfRequest, RequestType requestType) {
 		this.requestorId = id;
 		this.date = new Date();
 		this.requestType = requestType;
 		this.timeOfRequest = timeOfRequest;
+		this.secondsElapsed = 0L;
+
+		ticker.scheduleAtFixedRate((() -> secondsElapsed++), 0, AppConstant.TIMER_TICK_INVERVAL, TimeUnit.MILLISECONDS);
 	}
-	
-	/**
-	 * This method has to be implemented by the concrete child class for calculating
-	 * the rank of the request object. This rank can be used by comparator for
-	 * deciding the priority of the object in the priority queue.
-	 * 
-	 * @return {@link Long}
-	 */
-	abstract public Long getRank();
 
 	public Long getRequesterId() {
 		return requestorId;
@@ -49,6 +51,10 @@ abstract public class ServiceRequest implements Comparable<ServiceRequest> {
 
 	public Long getTimeOfRequest() {
 		return timeOfRequest;
+	}
+
+	public Long getSecondsElapsed() {
+		return secondsElapsed;
 	}
 
 	/*

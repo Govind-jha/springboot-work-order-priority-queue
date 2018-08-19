@@ -19,8 +19,10 @@ _Create a web service that accepts work orders and provides a prioritized list t
 
 This project is a Restful API for creating work order queue for Service Desk employee. The work order can be of four types  `normal, priority, VIP, and management override`. Different request types have their own implementation for calculating the rank. The priority queue is sorted from highest ranked to lowest ranked requester ID.
 
+This implementation got rid of PriorityBlockingQueue and just uses a Map to implement all the features. This version uses a ticker, which keeps updating the rank of the work order after every second.
+
 ## GETTING STARTED ##
-This application is a written in java using [Spring Boot][1] and built using Maven. 
+This application is a written in java using [Spring Boot][1] and built using Maven.
 
 ### Prerequisites ###
 * Git
@@ -130,7 +132,7 @@ The table below lists the formulas for calculating the rank of different request
 
 ## API Contract ##
 
-The WorkOrder Api implements the requirement/rules described in the previous section. It is used to create a work order queue (a #### Priority Queue #### based interface) for service request desk employee.
+The WorkOrder Api implements the requirement/rules described in the previous section. It is used to create a work order queue (a Priority Queue interface) for service request desk employee.
 
 ### Response Code And Headers ###
 If response status code is `204 NO CONTENT` or `205 RESET CONTENT`, the response will contain header `x-app-diagnostic`. HTTP status `205 RESET CONTENT` means server successfully processed the request, but is not returning any content. Unlike a `204 NO CONTENT` response, this response requires that the requester reset the document view (as the content might have changed).

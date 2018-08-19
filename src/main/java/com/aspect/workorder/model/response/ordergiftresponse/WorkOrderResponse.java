@@ -2,6 +2,7 @@ package com.aspect.workorder.model.response.ordergiftresponse;
 
 import java.util.List;
 
+import com.aspect.workorder.model.servicerequest.ServiceRequest;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
@@ -14,22 +15,13 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 @JsonInclude(Include.NON_EMPTY)
 public class WorkOrderResponse {
 
-	private Long requesterID;
 	private Double avgTime;
-	private List<Long> queue;
+	private List<ServiceRequest> queue;
+	private ServiceRequest serviceRequest;
 	private Integer position;
-	private Boolean success;
 	private String message;
 
 	public WorkOrderResponse() {
-	}
-
-	public Long getRequesterID() {
-		return requesterID;
-	}
-
-	public void setRequesterID(Long requesterID) {
-		this.requesterID = requesterID;
 	}
 
 	public Double getAvgTime() {
@@ -40,12 +32,20 @@ public class WorkOrderResponse {
 		this.avgTime = avgTime;
 	}
 
-	public List<Long> getQueue() {
+	public List<ServiceRequest> getQueue() {
 		return queue;
 	}
 
-	public void setQueue(List<Long> queue) {
+	public void setQueue(List<ServiceRequest> queue) {
 		this.queue = queue;
+	}
+
+	public ServiceRequest getServiceRequest() {
+		return serviceRequest;
+	}
+
+	public void setServiceRequest(ServiceRequest serviceRequest) {
+		this.serviceRequest = serviceRequest;
 	}
 
 	public Integer getPosition() {
@@ -56,14 +56,6 @@ public class WorkOrderResponse {
 		this.position = position;
 	}
 
-	public Boolean getSuccess() {
-		return success;
-	}
-
-	public void setSuccess(Boolean success) {
-		this.success = success;
-	}
-
 	public String getMessage() {
 		return message;
 	}
@@ -72,4 +64,5 @@ public class WorkOrderResponse {
 		this.message = message;
 	}
 	
+
 }

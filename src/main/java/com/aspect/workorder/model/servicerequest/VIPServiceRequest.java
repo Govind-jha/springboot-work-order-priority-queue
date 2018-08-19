@@ -15,9 +15,8 @@ public class VIPServiceRequest extends ServiceRequest {
 	}
 
 	@Override
-	public Long getRank() {
-		final Long timeInQueue = System.currentTimeMillis() - this.getTimeOfRequest();
-		return (long) Math.max(4, 2 * timeInQueue * Math.log(timeInQueue));
+	public Long calculateRank() {
+		return (long) Math.max(4, 2 * this.getSecondsElapsed() * Math.log(this.getSecondsElapsed()));
 	}
 
 }

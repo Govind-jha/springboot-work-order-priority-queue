@@ -11,13 +11,6 @@ import com.aspect.workorder.model.response.ordergiftresponse.WorkOrderResponse;
  */
 public interface WorkOrderResource {
 
-	/**
-	 * For adding a ID to queue (enqueue).
-	 *
-	 * @param id
-	 * @param timeOfRequest
-	 * @return {@link ResponseEntity}
-	 */
 	public ResponseEntity<WorkOrderResponse> addOrder(WorkOrderRequest request);
 
 	/**

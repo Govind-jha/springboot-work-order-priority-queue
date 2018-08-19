@@ -15,9 +15,8 @@ public class PriorityServiceRequest extends ServiceRequest {
 	}
 
 	@Override
-	public Long getRank() {
-		final Long timeInQueue = System.currentTimeMillis() - this.getTimeOfRequest();
-		return (long) Math.max(3, timeInQueue * Math.log(timeInQueue));
+	public Long calculateRank() {
+		return (long) Math.max(3, this.getSecondsElapsed() * Math.log(this.getSecondsElapsed()));
 	}
 
 }

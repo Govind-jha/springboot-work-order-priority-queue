@@ -1,16 +1,18 @@
 package com.aspect.workorder.services;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.aspect.workorder.dao.RankedServiceRequestQueueDAOImpl;
+import com.aspect.workorder.config.AppConstant;
 import com.aspect.workorder.factory.ServiceRequestFactory;
 import com.aspect.workorder.model.servicerequest.ServiceRequest;
+import com.aspect.workorder.utility.TickerRankComparator;
 
 /**
  * Gift Order Service Implementation.
@@ -21,50 +23,95 @@ import com.aspect.workorder.model.servicerequest.ServiceRequest;
 @Component
 public class WorkOrderServiceImpl implements WorkOrderService {
 
-	@Autowired
-	RankedServiceRequestQueueDAOImpl giftOrderRequestDAO;
+	private volatile Map<Long, ServiceRequest> map = new HashMap<>(AppConstant.INITIAL_QUEUE_SIZE);
 
 	@Override
-	public Boolean addOrder(Long requestorId, Long timeOfRequest) {
-		return giftOrderRequestDAO.enque(ServiceRequestFactory.getRequest(requestorId, timeOfRequest)) ? Boolean.TRUE
-				: Boolean.FALSE;
-	}
+	public Optional<ServiceRequest> addOrder(Long requesterId, Long timeOfRequest) {
+		if (map.get(requesterId) == null) {
+			ServiceRequest order = ServiceRequestFactory.getRequest(requesterId, timeOfRequest);
+			map.put(requesterId, order);
 
-	@Override
-	public Long removeNextOrder() {
-		final Optional<ServiceRequest> requestOptional = giftOrderRequestDAO.deque();
-
-		if (requestOptional.isPresent()) {
-			return requestOptional.get().getRequesterId();
+			return Optional.of(order);
 		}
 
-		return -1L;
+		return Optional.empty();
 	}
 
 	@Override
-	public List<Long> getOrderList() {
-		final List<ServiceRequest> sortedListOfRequests = new ArrayList<>(giftOrderRequestDAO.getQueue());
+	public Optional<ServiceRequest> removeNextOrder() {
+		final List<ServiceRequest> serviceRequests;
 
-		return sortedListOfRequests.stream().map(e -> e.getRequesterId()).collect(Collectors.toList());
+		synchronized (map) {
+			serviceRequests = new ArrayList<>(map.values());
+		}
+
+		ServiceRequest requestToRemove = null;
+
+		if (!serviceRequests.isEmpty()) {
+			Collections.sort(serviceRequests, new TickerRankComparator());
+			requestToRemove = serviceRequests.get(0);
+
+			synchronized (map) {
+				map.remove(requestToRemove.getRequesterId());
+			}
+		}
+
+		return Optional.ofNullable(requestToRemove);
 	}
 
 	@Override
-	public Long remove(final Long requestorId) {
-		return giftOrderRequestDAO.remove(requestorId) ? requestorId : -1L;
+	public Optional<List<ServiceRequest>> getSortedOrderList() {
+		final List<ServiceRequest> serviceRequests;
+
+		synchronized (map) {
+			serviceRequests = new ArrayList<>(map.values());
+		}
+
+		Collections.sort(serviceRequests, new TickerRankComparator());
+
+		return Optional.ofNullable(serviceRequests);
 	}
 
 	@Override
-	public Integer getPosition(Long requestorId) {
-		return giftOrderRequestDAO.getQueue().indexOf(giftOrderRequestDAO.getServiceRequestByIdMap().get(requestorId.toString()));
+	public Optional<ServiceRequest> remove(final Long requesterId) {
+		final ServiceRequest request;
+
+		synchronized (map) {
+			request = map.get(requesterId);
+		}
+
+		return Optional.ofNullable(request);
+	}
+
+	@Override
+	public Optional<Integer> getPosition(Long requestorId) {
+		final ServiceRequest request = map.get(requestorId);
+		final List<ServiceRequest> serviceRequests;
+
+		if (request != null) {
+			synchronized (map) {
+				serviceRequests = new ArrayList<>(map.values());
+			}
+			Collections.sort(serviceRequests, new TickerRankComparator());
+
+			return Optional.of(serviceRequests.indexOf(request));
+		}
+
+		return Optional.empty();
 	}
 
 	@Override
 	public Double avgWaitTime(Long currentTimeInSecond) {
 		final List<Long> listOfRequestTime = new ArrayList<>();
-		giftOrderRequestDAO.getQueue().stream()
-				.forEach(e -> listOfRequestTime.add(currentTimeInSecond - e.getTimeOfRequest()));
+		final List<ServiceRequest> serviceRequests;
 
-		return listOfRequestTime.stream().mapToLong((x) -> x).summaryStatistics().getAverage();
+		synchronized (map) {
+			serviceRequests = new ArrayList<>(map.values());
+		}
+
+		serviceRequests.parallelStream().forEach(e -> listOfRequestTime.add(e.getSecondsElapsed()));
+
+		return listOfRequestTime.stream().mapToLong(x -> x).summaryStatistics().getAverage();
 	}
 
 }

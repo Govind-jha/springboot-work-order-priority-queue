@@ -42,6 +42,8 @@ public class AppConstant {
 	public static final String ERR_MSG_PROVIDE_A_VALID_NUMERIC_ARGUMENT_FOR_REQUESTER_ID = "Provide a valid numeric argument for requesterId.";
 	public static final String ERR_MSG_PROVIDE_A_VALID_NUMERIC_ARGUMENT_FOR_TIME_OF_REQUEST = "Provide a valid numeric argument for timeOfRequest.";
 
+	public static final long TIMER_TICK_INVERVAL = 1000L;
+
 
 
 }

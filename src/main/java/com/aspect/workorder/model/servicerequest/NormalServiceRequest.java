@@ -14,8 +14,8 @@ public class NormalServiceRequest extends ServiceRequest {
 	}
 
 	@Override
-	public Long getRank() {
-		return System.currentTimeMillis() - this.getTimeOfRequest();
+	public Long calculateRank() {
+		return this.getSecondsElapsed();
 	}
 
 }
