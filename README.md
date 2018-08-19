@@ -19,9 +19,9 @@ _Create a web service that accepts work orders and provides a prioritized list t
 
 This project is a Restful API for creating work order queue for Service Desk employee. The work order can be of four types  `normal, priority, VIP, and management override`. Different request types have their own implementation for calculating the rank. The priority queue is sorted from highest ranked to lowest ranked requester ID.
 
-> This implementation got rid of PriorityBlockingQueue and just uses a Map to implement all the features. This version uses a ticker, which keeps updating the rank of the work order after every second.
+> This implementation got rid of PriorityBlockingQueue and just uses a Map to implement all the features. This version uses a ticker, which keeps updating the value of second elapsed for the work orders waiting in the queue. Ranks are calculated only when required with minimum blocking.
 
-	`ticker.scheduleAtFixedRate((() -> secondsElapsedByWorkOrder++), 0, TIMER_TICK_INVERVAL, TimeUnit.MILLISECONDS);`
+	ticker.scheduleAtFixedRate((() -> secondsElapsedByWorkOrder++), 0, TIMER_TICK_INVERVAL, TimeUnit.MILLISECONDS);
 
 ## GETTING STARTED ##
 This application is a written in java using [Spring Boot][1] and built using Maven.
