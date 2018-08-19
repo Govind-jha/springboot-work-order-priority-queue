@@ -1,6 +1,6 @@
 # WORK ORDER PRIORITY QUEUE WEB SERVICES # 
 - - - - - - - -
-![picture alt](https://ci.spring.io/api/v1/teams/spring-boot/pipelines/spring-boot-2.0.x/jobs/build/badge) ![picture alt](https://img.shields.io/badge/Coverage-96.7%25-brightgreen.svg) ![picture alt](https://img.shields.io/hackage-deps/v/lens.svg) ![picture alt](https://img.shields.io/badge/Spring%20Boot-2.0.4.RELEASE-Blue.svg)
+![picture alt](https://img.shields.io/badge/build-passing-brightgreen.svg) ![picture alt](https://img.shields.io/badge/Coverage-96.7%25-brightgreen.svg) ![picture alt](https://img.shields.io/hackage-deps/v/lens.svg) ![picture alt](https://img.shields.io/badge/Spring%20Boot-2.0.4.RELEASE-Blue.svg)
 ## Problem Statement ##
 &nbsp;
 _Create a web service that accepts work orders and provides a prioritized list to work._
