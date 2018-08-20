@@ -1,11 +1,13 @@
 # WORK ORDER PRIORITY QUEUE WEB SERVICES # 
 - - - - - - - -
-![picture alt](https://ci.spring.io/api/v1/teams/spring-boot/pipelines/spring-boot-2.0.x/jobs/build/badge) ![picture alt](https://img.shields.io/badge/Coverage-96.7%25-brightgreen.svg) ![picture alt](https://img.shields.io/hackage-deps/v/lens.svg) ![picture alt](https://img.shields.io/badge/Spring%20Boot-2.0.4.RELEASE-Blue.svg)
+![](https://img.shields.io/badge/build-passing-brightgreen.svg) ![](https://img.shields.io/badge/Coverage-96.7%25-brightgreen.svg) ![](https://img.shields.io/hackage-deps/v/lens.svg) ![](https://img.shields.io/badge/Spring%20Boot-2.0.4.RELEASE-Blue.svg)
 ## Problem Statement ##
 &nbsp;
 _Create a web service that accepts work orders and provides a prioritized list to work._
 &nbsp;
-![picture alt](https://thumbs.dreamstime.com/x/asian-business-people-group-sitting-line-queue-door-asia-businesspeople-banner-flat-vector-illustration-70825754.jpg, "Job Scheduler uses priority queue.")
+![](https://thumbs.dreamstime.com/x/asian-business-people-group-sitting-line-queue-door-asia-businesspeople-banner-flat-vector-illustration-70825754.jpg, "Job Schedulers uses priority queue.")
+&nbsp;
+> For an alternate approach based on `Ticker` ( Ticker is like a pendulum's movement in a clock. Appropriately, one cycle of the event loop is called a tick.), [click here](https://github.com/Govind-jha/springboot-work-order-priority-queue/tree/impl-ticker-based-rank-update).
 
 <!-- TOC depthFrom:1 depthTo:2 withLinks:1 updateOnSave:1 orderedList:0 -->
 
